@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INVISION SOLUTIONS (SMC- PRIVATE) LIMITED | Retro 15-Puzzle</title>
+    <style>
+        /* Base Reset & Cyberpunk Variables */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --bg-dark: #080b11;
+            --bg-card: #111726;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --accent-pink: #ff007f;
+            --accent-blue: #00f0ff;
+            --accent-purple: #bd00ff;
+            --border-color: #1e2944;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            background-image: linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Navigation */
+        header {
+            background-color: rgba(8, 11, 17, 0.85);
+            backdrop-filter: blur(12px);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 0;
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--text-main);
+            text-transform: uppercase;
+        }
+
+        .logo span {
+            color: var(--accent-pink);
+            text-shadow: 0 0 10px rgba(255, 0, 127, 0.5);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-blue);
+        }
+
+        /* Hero Showcase */
+        .hero {
+            padding: 11rem 0 6rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 4rem;
+        }
+
+        .hero-content {
+            flex: 1.2;
+        }
+
+        .badge {
+            background-color: rgba(0, 240, 255, 0.07);
+            color: var(--accent-blue);
+            padding: 0.4rem 1.2rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+        }
+
+        .hero-content h1 {
+            font-size: 3.2rem;
+            line-height: 1.15;
+            margin-bottom: 1.5rem;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+        }
+
+        .hero-content h1 span {
+            background: linear-gradient(45deg, var(--accent-pink), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-content p {
+            color: var(--text-muted);
+            font-size: 1.15rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+        }
+
+        .hero-mockup {
+            flex: 0.8;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Canvas Mockup Visualizer */
+        .canvas-container {
+            width: 340px;
+            height: 340px;
+            background: #0d121f;
+            border: 2px solid var(--accent-blue);
+            border-radius: 12px;
+            padding: 15px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            box-shadow: 0 0 35px rgba(0, 240, 255, 0.15), inset 0 0 20px rgba(0, 240, 255, 0.05);
+            position: relative;
+        }
+
+        .canvas-tile {
+            background: linear-gradient(135deg, #ff007f 0%, #7900ff 100%);
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 10px rgba(255, 0, 127, 0.3);
+        }
+
+        .canvas-tile.empty {
+            background: transparent;
+            border: 1px dashed var(--border-color);
+            box-shadow: none;
+        }
+
+        /* Standard Technical Layout Section */
+        .section {
+            padding: 6rem 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 3rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section-title span {
+            color: var(--accent-blue);
+        }
+
+        /* Tech Architecture Grid */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .tech-card {
+            background-color: var(--bg-card);
+            padding: 2.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            transition: border-color 0.3s, transform 0.3s;
+        }
+
+        .tech-card:hover {
+            border-color: var(--accent-pink);
+            transform: translateY(-2px);
+        }
+
+        .tech-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tech-card h3 span {
+            color: var(--accent-pink);
+        }
+
+        .tech-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Code Architecture Blocks */
+        .code-container {
+            background-color: #04060a;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            margin-top: 1.5rem;
+        }
+
+        pre {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85rem;
+            color: #38bdf8;
+            line-height: 1.5;
+        }
+
+        /* Privacy Banner styling */
+        .privacy-box {
+            background: linear-gradient(135deg, #111726 0%, #080c14 100%);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 12px;
+            padding: 3.5rem;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.05);
+        }
+
+        .privacy-box h2 {
+            font-size: 2rem;
+            margin-bottom: 1.2rem;
+            color: var(--text-main);
+        }
+
+        .privacy-box p {
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto 2rem auto;
+            font-size: 1.1rem;
+        }
+
+        .email-btn {
+            display: inline-block;
+            background: transparent;
+            border: 1px solid var(--accent-pink);
+            color: #fff;
+            padding: 0.7rem 1.8rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.15);
+            transition: all 0.3s;
+        }
+
+        .email-btn:hover {
+            background-color: var(--accent-pink);
+            box-shadow: 0 0 25px rgba(255, 0, 127, 0.4);
+        }
+
+        /* Corporate Section Layout */
+        .corp-layout {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .corp-info h3 {
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .corp-info p {
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--bg-card);
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .info-table td {
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        .info-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .lbl {
+            font-weight: 700;
+            color: var(--accent-blue);
+            width: 35%;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+
+        .val {
+            color: var(--text-main);
+        }
+
+        /* Corporate Footer */
+        footer {
+            background-color: #04060a;
+            padding: 4rem 0 2rem 0;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 4rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-brand h4 {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .footer-address h4 {
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+
+        .footer-address p {
+            margin-bottom: 0.4rem;
+        }
+
+        .footer-address a {
+            color: var(--accent-blue);
+            text-decoration: none;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.8rem;
+        }
+
+        /* Responsiveness adjustments */
+        @media (max-width: 968px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding-top: 8rem;
+            }
+            .hero-content p {
+                margin: 0 auto 2rem auto;
+            }
+            .corp-layout {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container nav">
+            <div class="logo">INVISION <span>SOLUTIONS</span></div>
+            <ul class="nav-links">
+                <li><a href="#architecture">Architecture</a></li>
+                <li><a href="#algorithms">Algorithms</a></li>
+                <li><a href="#privacy">Privacy Policy</a></li>
+                <li><a href="#corporate">Corporate</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <section class="container hero" id="architecture">
+        <div class="hero-content">
+            <span class="badge">Zero Third-Party Plugins &bull; Native Canvas Loop</span>
+            <h1>Retro 15-Puzzle <span>High-Performance Engine</span></h1>
+            <p>An optimized, standalone 2D Sliding Tile game architecture designed in pure Flutter. Leverages direct canvas layout pipelines and native Platform Channels for low footprint deployment.</p>
+        </div>
+        <div class="hero-mockup">
+            <div class="canvas-container">
+                <div class="canvas-tile">1</div>
+                <div class="canvas-tile">2</div>
+                <div class="canvas-tile">3</div>
+                <div class="canvas-tile">4</div>
+                <div class="canvas-tile">5</div>
+                <div class="canvas-tile">6</div>
+                <div class="canvas-tile">7</div>
+                <div class="canvas-tile">8</div>
+                <div class="canvas-tile">9</div>
+                <div class="canvas-tile">10</div>
+                <div class="canvas-tile">11</div>
+                <div class="canvas-tile">12</div>
+                <div class="canvas-tile">13</div>
+                <div class="canvas-tile">14</div>
+                <div class="canvas-tile">15</div>
+                <div class="canvas-tile empty"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">System <span>Architecture</span></h2>
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <h3><span>01.</span> MVC Architecture</h3>
+                    <p>Strict division of tasks using isolated layers: 1D board state logic inside models, Fisher-Yates verification sequences within controllers, and direct interpolation rendering inside CustomPainter view arrays.</p>
+                </div>
+                <div class="tech-card">
+                    <h3><span>02.</span> Canvas Rendering Loop</h3>
+                    <p>Avoids element tree bloat. Uses a lightweight, low-overhead canvas layer to process real-time UI modifications, rounded grid tile surfaces, neon border paths, and linear particle physics equations.</p>
+                </div>
+                <div class="tech-card">
+                    <h3><span>03.</span> Low Footprint Channels</h3>
+                    <p>Maintains minimal binary overhead via direct Platform Channel paths. Direct connection to Android Kotlin SharedPreferences/Camera systems and iOS Swift UserDefaults APIs bypassing external plugin layers.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="algorithms">
+        <div class="container">
+            <h2 class="section-title">Algorithmic <span>Verification</span></h2>
+            <p style="color: var(--text-muted); margin-bottom: 2rem; max-width: 800px;">
+                Guarantees mathematical puzzle solvability by computing matrix parity checks prior to loading grid arrays. Parity checks balance linear board inversion counts along with the empty slot indexes.
+            </p>
+            <div class="code-container">
+<pre>
+bool isBoardSolvable(List&lt;int&gt; board) {
+  int inversions = 0;
+  for (int i = 0; i &lt; board.length; i++) {
+    if (board[i] == 0) continue;
+    for (int j = i + 1; j &lt; board.length; j++) {
+      if (board[j] == 0) continue;
+      if (board[i] &gt; board[j]) inversions++;
+    }
+  }
+  int emptyRowFromTop = board.indexOf(0) ~/ 4;
+  return (inversions + emptyRowFromTop) % 2 == 1;
+}
+</pre>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="privacy">
+        <div class="container">
+            <div class="privacy-box">
+                <h2>Definitive Privacy Configuration</h2>
+                <p>
+                    Our core design is entirely offline-first. The application functions completely without internet permissions, cloud data centers, tracking scripts, or analytics servers. All execution logs, match profiles, local tracking counters, and device-captured graphics are processed locally within the secure device container. We collect, store, and distribute zero individual tracking data elements.
+                </p>
+                <p style="font-size: 0.95rem; color: var(--accent-blue);">For security compliance reviews, contact our corporate data protection interface:</p>
+                <a href="mailto:gfc2565@gmail.com" class="email-btn">gfc2565@gmail.com</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="corporate">
+        <div class="container corp-layout">
+            <div class="corp-info">
+                <h2 style="font-size: 2rem; margin-bottom: 1.5rem; text-transform: uppercase;">Corporate <span>Profile</span></h2>
+                <h3>INVISION SOLUTIONS (SMC- PRIVATE) LIMITED</h3>
+                <p>Registered and authenticated under the Federal Board of Revenue (FBR) regulations of the Government of Pakistan pursuant to Section 181C of the Income Tax Ordinance 2001.</p>
+                <p>We are dedicated to producing robust, zero-dependency utility systems and game applications focused on user data ownership, high computational speeds, and bare-metal performance optimization loops.</p>
+            </div>
+            <div>
+                <table class="info-table">
+                    <tr>
+                        <td class="lbl">Registration No.</td>
+                        <td class="val">0243895</td>
+                    </tr>
+                    <tr>
+                        <td class="lbl">D-U-N-S Number</td>
+                        <td class="val">850406503</td>
+                    </tr>
+                    <tr>
+                        <td class="lbl">Incorporation No.</td>
+                        <td class="val">850406503</td>
+                    </tr>
+                    <tr>
+                        <td class="lbl">Type of Person</td>
+                        <td class="val">Company (SMC-Private Limited)</td>
+                    </tr>
+                    <tr>
+                        <td class="lbl">Assigned Office</td>
+                        <td class="val">CRO Islamabad</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <h4>INVISION SOLUTIONS (SMC- PRIVATE) LIMITED</h4>
+                <p>Engineering premium, zero-plugin standalone codebases and local utility software environments.</p>
+            </div>
+            <div class="footer-address">
+                <h4>Corporate Headquarters</h4>
+                <p>NJ Tower Office 1, Floor 3 Sector F</p>
+                <p>DHA 1 Islamabad, 46000</p>
+                <p>Pakistan</p>
+                <p style="margin-top: 0.8rem;"><strong>Email:</strong> <a href="mailto:gfc2565@gmail.com">gfc2565@gmail.com</a></p>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <p>&copy; 2026 INVISION SOLUTIONS (SMC- PRIVATE) LIMITED. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
